@@ -57,16 +57,17 @@ For more details about this base project see: [Service Oriented Architecture Lab
 ---------------
 ## In this exercise
 
+In this lab we will
+
 * Implement asp.net core default logging in controller 
 * Implement logging using custom middleware 
 * Implement exception handling using custom middleware
-* Remove logging from controller as custom middleware logging would be used.
 
 Here are the steps to begin with
 
-## Step 1: Implement logging in function
+## Step 1: Implement Logging in API Method
 
-ASP.NET Core project templates use Kestrel by default when not hosted with IIS. In `Program.cs`, the **WebApplication.CreateBuilder** method calls [UseKestrel](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.hosting.webhostbuilderkestrelextensions.usekestrel?view=aspnetcore-6.0) internally and when we will implement logging then log messages would be shown on kestrel output window.
+ASP.NET Core project templates use [Kestrel](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel?view=aspnetcore-6.0#get-started) by default when not hosted with IIS. In `Program.cs`, the **WebApplication.CreateBuilder** method calls [UseKestrel](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.hosting.webhostbuilderkestrelextensions.usekestrel?view=aspnetcore-6.0) internally and when we will implement logging then log messages would be shown on kestrel output window.
 
 So now we will implement asp.net core [default logging](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-6.0) into `TransactionController` . For this we needs to inject logging service into our controller so first define following logging service property in `TransactionController`
 
@@ -110,7 +111,7 @@ Now execute code and access `GetLast12MonthBalances` and log messages would be s
 
 > ![kestrel-logging-without-middleware](/readme_assets/kestrel-logging-without-middleware.png)
 
-## Step 2: Create and implement custom logging middleware
+## Step 2: Implement Custom Logging Middleware
 
 Create **Middlewares** folder in API project and add a class `LoggingMiddleware.cs` in it and put following code.
 This code is injecting logger in middleware constructor as dependency injection. `InvokeAsync` method is invoked in request handling pipeline and it would be performing operations on **HttpContext**, in our case we will use it for logging the request path .
@@ -140,7 +141,7 @@ This code is injecting logger in middleware constructor as dependency injection.
 ```
 
 
-## Step 3: Implement exception handling in middleware
+## Step 3: Implement Exception Handling in Middleware
 
 We would implement exception handling in same middleware class `LoggingMiddleware.cs` and would wrap the `InvokeAsync` body in **try** and **catch** block
 
@@ -177,7 +178,7 @@ We would implement exception handling in same middleware class `LoggingMiddlewar
 ```
 
 
-## Step 4: Expose and register middleware
+## Step 4: Expose And Register Middleware
 
 Now we need to expose middleware as extension method so that it can be injected in asp.net core pipeline in `program.cs`.
 Create new **static** class `CustomMiddlewaresExtensions.cs` and use following code in it and class would look like this
@@ -197,7 +198,7 @@ And to register middleware in pipeline put this line `app.UseCustomLogginMiddlew
 
 Now our logging and exception handling middleware code is completed. 
 
-## Step 5: Remove logging from controller
+## Step 5: Remove Logging From Controller
 
 Now we will remove logging from controller as custom middleware logging would be used. Now `TransactionController` constructor  would be look like this.
 
@@ -223,7 +224,7 @@ public async Task<ActionResult> GetLast12MonthBalances()
 
 ## Final Output
 
-Now to see logging in action, run the api project and access `GetLast12MonthBalances` API method and following logging information should be displayed in kestrel output window
+Now to see logging in action, run the api project and access API http://localhost:5070/api/Transaction/GetLast12MonthBalances then following logging information should be displayed in kestrel output window
 
 > ![logging-with-middleware](/readme_assets/logging-with-middleware.png)
 
